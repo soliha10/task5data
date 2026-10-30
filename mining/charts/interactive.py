@@ -185,13 +185,15 @@ def _add_highlight(figure: go.Figure, highlight: Span) -> None:
 
 def _apply_layout(figure: go.Figure, title: str | None, height: int, barmode: str) -> None:
     figure.update_layout(
-        title=dict(text=title, x=0, font=dict(size=16, color=TITLE_COLOR)) if title else None,
+        title=dict(text=title, x=0, xanchor="left", font=dict(size=16, color=TITLE_COLOR))
+        if title
+        else None,
         template="plotly_white",
         height=height,
         barmode=barmode,
         bargap=0.15,
-        margin=dict(l=10, r=10, t=60 if title else 30, b=10),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+        margin=dict(l=10, r=10, t=50 if title else 30, b=70),
+        legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="left", x=0),
         hovermode="closest",
         hoverlabel=dict(
             bgcolor=HOVER_BACKGROUND,
