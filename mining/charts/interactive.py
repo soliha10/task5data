@@ -1,5 +1,4 @@
 from __future__ import annotations
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from ..detection import DROP, SPIKE
@@ -21,19 +20,18 @@ from .theme import (
     ColorMap,
     FlagMap,
     Span,
-    colors_by_date,
     flags_for,
     has_flags,
     polynomial_trend,
     stack_members,
     trend_label,
-    widths_by_date,
 )
 
 SYMBOLS = {SPIKE: "triangle-up", DROP: "triangle-down"}
 TRANSPARENT = "rgba(0,0,0,0)"
 HOVER_POINT = "%{x|%b %d, %Y}<br>%{y:.1f} t"
 STACK_OUTLINE_WIDTH = 3
+STACK_GROUP = "stack"
 
 def build_figure(
     output: pd.DataFrame,
@@ -57,11 +55,14 @@ def build_figure(
         _add_direction_legend(figure)
     if highlight:
         _add_highlight(figure, highlight)
-    _apply_layout(figure, title, height, barmode="stack" if kind == STACKED else "group")
+    _apply_layout(figure, title, height)
     return figure
 
 def _hover_template(name: str) -> str:
     return f"<b>{name}</b><br>{HOVER_POINT}<extra></extra>"
+
+def _flag_hover_template(name: str, direction: str) -> str:
+    return f"<b>{name} · {direction}</b><br>{HOVER_POINT}<br>%{{customdata}}<extra></extra>"
 
 def _add_trend(
     figure: go.Figure, x, values: pd.Series, degree: int, name: str, color: str, width: float
@@ -84,17 +85,19 @@ def _add_stack(
     colors: ColorMap,
 ) -> None:
     members = stack_members(output, series)
+    bases = output[members].cumsum(axis=1) - output[members]
     for name in members:
-        flags = flags_for(flagged, name)
         figure.add_bar(
             x=output.index,
             y=output[name],
+            base=bases[name],
             name=name,
+            offsetgroup=STACK_GROUP,
             marker_color=colors[name],
-            marker_line_color=colors_by_date(output.index, flags, TRANSPARENT),
-            marker_line_width=widths_by_date(output.index, flags, STACK_OUTLINE_WIDTH),
             hovertemplate=_hover_template(name),
         )
+    for name in members:
+        _add_flag_bars(figure, name, flags_for(flagged, name), STACK_GROUP, bases[name])
     if trend_degree:
         _add_trend(
             figure,
@@ -131,31 +134,58 @@ def _add_series(
             x=output.index,
             y=output[name],
             name=name,
-            marker_color=colors_by_date(output.index, flags, color),
+            offsetgroup=name,
+            marker_color=color,
             hovertemplate=_hover_template(name),
         )
+        _add_flag_bars(figure, name, flags, name)
     if trend_degree:
         _add_trend(figure, output.index, output[name], trend_degree, f"{name} trend", color, 1.6)
 
 def _add_flag_markers(figure: go.Figure, name: str, flags: pd.DataFrame) -> None:
-    directions = flags["direction"]
-    figure.add_scatter(
-        x=flags.index,
-        y=flags["value"],
-        mode="markers",
-        showlegend=False,
-        marker=dict(
-            size=12,
-            line=dict(color=[DIRECTION_OUTLINES[d] for d in directions], width=1.5),
-            color=[DIRECTION_COLORS[d] for d in directions],
-            symbol=[SYMBOLS[d] for d in directions],
-        ),
-        customdata=np.stack([directions, flags["tests"]], axis=-1),
-        hovertemplate=(
-            f"<b>{name} · %{{customdata[0]}}</b><br>{HOVER_POINT}"
-            "<br>%{customdata[1]}<extra></extra>"
-        ),
-    )
+    for direction, rows in flags.groupby("direction"):
+        figure.add_scatter(
+            x=rows.index,
+            y=rows["value"],
+            mode="markers",
+            name=direction,
+            legendgroup=direction,
+            showlegend=False,
+            marker=dict(
+                size=12,
+                line=dict(color=DIRECTION_OUTLINES[direction], width=1.5),
+                color=DIRECTION_COLORS[direction],
+                symbol=SYMBOLS[direction],
+            ),
+            customdata=rows["tests"],
+            hovertemplate=_flag_hover_template(name, direction),
+        )
+
+def _add_flag_bars(
+    figure: go.Figure,
+    name: str,
+    flags: pd.DataFrame,
+    offsetgroup: str,
+    bases: pd.Series | None = None,
+) -> None:
+    for direction, rows in flags.groupby("direction"):
+        color = DIRECTION_COLORS[direction]
+        outlined = bases is not None
+        figure.add_bar(
+            x=rows.index,
+            y=rows["value"],
+            base=bases.loc[rows.index] if outlined else None,
+            name=direction,
+            legendgroup=direction,
+            showlegend=False,
+            offsetgroup=offsetgroup,
+            marker=dict(
+                color=TRANSPARENT if outlined else color,
+                line=dict(color=color, width=STACK_OUTLINE_WIDTH if outlined else 0),
+            ),
+            customdata=rows["tests"],
+            hovertemplate=_flag_hover_template(name, direction),
+        )
 
 def _add_direction_legend(figure: go.Figure) -> None:
     for direction, color in DIRECTION_COLORS.items():
@@ -164,6 +194,7 @@ def _add_direction_legend(figure: go.Figure) -> None:
             y=[None],
             mode="markers",
             name=direction,
+            legendgroup=direction,
             marker=dict(
                 color=color,
                 size=11,
@@ -183,14 +214,14 @@ def _add_highlight(figure: go.Figure, highlight: Span) -> None:
         layer="below",
     )
 
-def _apply_layout(figure: go.Figure, title: str | None, height: int, barmode: str) -> None:
+def _apply_layout(figure: go.Figure, title: str | None, height: int) -> None:
     figure.update_layout(
         title=dict(text=title, x=0, xanchor="left", font=dict(size=16, color=TITLE_COLOR))
         if title
         else None,
         template="plotly_white",
         height=height,
-        barmode=barmode,
+        barmode="group",
         bargap=0.15,
         margin=dict(l=10, r=10, t=50 if title else 30, b=70),
         legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="left", x=0),
