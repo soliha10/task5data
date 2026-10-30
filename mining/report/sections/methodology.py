@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 from reportlab.lib.units import mm
 from reportlab.platypus import PageBreak, Spacer
-
 from ...detection import DetectionParams
 from ..components import paragraph, section_title
 from ..context import ReportContext
@@ -13,13 +11,11 @@ ADJUSTMENT_ON = (
 )
 ADJUSTMENT_OFF = "Disabled: tests are applied to raw values."
 
-
 def methodology_section(context: ReportContext) -> list:
     story = [PageBreak(), section_title(7, "Methodology")]
     for title, text in _items(context.analysis.params):
         story += [paragraph(f"<b>{title}.</b> {text}"), Spacer(1, 2 * mm)]
     return story
-
 
 def _items(params: DetectionParams) -> list[tuple[str, str]]:
     return [

@@ -1,17 +1,13 @@
 from __future__ import annotations
-
 import streamlit as st
-
 from mining import stats
 from mining.analysis import Analysis
 from mining.data import series_label
 from mining.detection import TESTS
-
 from .components import INFO_METRIC, NO_ANOMALIES_MESSAGE, show_chart, show_episodes_table, styled
 from .controls import Controls
 
 DETAIL_COLUMNS = ["value", "adjusted", "z", "ma_dev_pct", *TESTS]
-
 
 def render_mine_tab(analysis: Analysis, controls: Controls) -> None:
     name = st.selectbox("Mine", list(analysis.output.columns), format_func=series_label)
@@ -28,7 +24,6 @@ def render_mine_tab(analysis: Analysis, controls: Controls) -> None:
     with st.expander("Per-day test results"):
         st.dataframe(styled(analysis.results[name][DETAIL_COLUMNS], 2), width="stretch")
 
-
 def _render_mine_metrics(analysis: Analysis, name: str) -> None:
     row = analysis.summary.loc[name]
     quartiles = f"Q1 {row[stats.Q1]:,.1f} · Q3 {row[stats.Q3]:,.1f}"
@@ -37,7 +32,6 @@ def _render_mine_metrics(analysis: Analysis, name: str) -> None:
     std.metric("Standard deviation", f"{row[stats.STD]:,.1f} t", border=True)
     median.metric("Median", f"{row[stats.MEDIAN]:,.1f} t", border=True)
     iqr.metric("Interquartile range", f"{row[stats.IQR]:,.1f} t", quartiles, **INFO_METRIC)
-
 
 def _render_mine_episodes(analysis: Analysis, name: str) -> None:
     episodes = analysis.episodes_of(name)

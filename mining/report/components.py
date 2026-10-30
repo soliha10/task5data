@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 import io
-
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Image, Paragraph, Table, TableStyle
-
 from .theme import (
     BODY_TEXT,
     BRAND_DARK,
@@ -21,7 +18,6 @@ ALL_CELLS = ((0, 0), (-1, -1))
 HEADER_ROW = ((0, 0), (-1, 0))
 BODY_ROWS = ((0, 1), (-1, -1))
 LAST_ROW = ((0, -1), (-1, -1))
-
 DATA_TABLE_STYLE = [
     ("BACKGROUND", *HEADER_ROW, BRAND_DARK),
     ("TEXTCOLOR", *HEADER_ROW, PAPER),
@@ -35,7 +31,6 @@ DATA_TABLE_STYLE = [
     ("TOPPADDING", *ALL_CELLS, 4),
     ("BOTTOMPADDING", *ALL_CELLS, 4),
 ]
-
 KEY_VALUE_STYLE = [
     ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
     ("FONTSIZE", *ALL_CELLS, 8.5),
@@ -46,7 +41,6 @@ KEY_VALUE_STYLE = [
     ("TOPPADDING", *ALL_CELLS, 4),
     ("BOTTOMPADDING", *ALL_CELLS, 4),
 ]
-
 KPI_STRIP_STYLE = [
     ("BOX", *ALL_CELLS, 0.6, RULE),
     ("INNERGRID", *ALL_CELLS, 0.6, RULE),
@@ -56,27 +50,21 @@ KPI_STRIP_STYLE = [
     ("LEFTPADDING", *ALL_CELLS, 8),
 ]
 
-
 def format_number(value: float, digits: int = 1) -> str:
     return f"{float(value):,.{digits}f}"
-
 
 def paragraph(text: str, style: str = "body") -> Paragraph:
     return Paragraph(text, STYLES[style])
 
-
 def section_title(number: int, title: str) -> Paragraph:
     return paragraph(f"{number}. {title}", "h1")
-
 
 def series_table_widths(value_columns: int) -> list[float]:
     value_width = (CONTENT_WIDTH - SERIES_COLUMN_WIDTH) / value_columns
     return [SERIES_COLUMN_WIDTH] + [value_width] * value_columns
 
-
 def equal_widths(columns: int) -> list[float]:
     return [CONTENT_WIDTH / columns] * columns
-
 
 def data_table(
     rows: list[list],
@@ -92,16 +80,13 @@ def data_table(
     table.setStyle(TableStyle(style))
     return table
 
-
 def key_value_table(rows: list[list], key_width: float, value_width: float) -> Table:
     table = Table(rows, colWidths=[key_width, value_width])
     table.setStyle(TableStyle(KEY_VALUE_STYLE))
     return table
 
-
 def chart_image(png: bytes, width: float = CONTENT_WIDTH, aspect: float = 0.46) -> Image:
     return Image(io.BytesIO(png), width=width, height=width * aspect)
-
 
 def kpi_strip(items: list[tuple[str, str]]) -> Table:
     cell_width = CONTENT_WIDTH / len(items)
@@ -109,7 +94,6 @@ def kpi_strip(items: list[tuple[str, str]]) -> Table:
     table = Table([cells], colWidths=[cell_width] * len(items))
     table.setStyle(TableStyle(KPI_STRIP_STYLE))
     return table
-
 
 def banner(text: str, background, text_color) -> Table:
     style = ParagraphStyle("banner_text", parent=STYLES["banner"], textColor=text_color)
@@ -126,12 +110,10 @@ def banner(text: str, background, text_color) -> Table:
     )
     return table
 
-
 def side_by_side(left, right, left_width: float, right_width: float) -> Table:
     table = Table([[left, right]], colWidths=[left_width, right_width])
     table.setStyle(TableStyle([("VALIGN", *ALL_CELLS, "TOP"), ("LEFTPADDING", *ALL_CELLS, 0)]))
     return table
-
 
 def _kpi_cell(label: str, value: str, width: float) -> Table:
     return Table(

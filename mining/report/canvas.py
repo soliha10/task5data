@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
-
 from .theme import (
     ACCENT,
     BRAND_DARK,
@@ -24,16 +22,13 @@ FOOTER_TEXT_Y = 8 * mm
 HEADER_ACCENT_WIDTH = 24 * mm
 COVER_PAGE_NUMBER = 1
 
-
 class DecoratedPageCanvas(canvas.Canvas):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._page_states = []
-
     def showPage(self):
         self._page_states.append(dict(self.__dict__))
         self._startPage()
-
     def save(self):
         page_count = len(self._page_states)
         for state in self._page_states:
@@ -45,7 +40,6 @@ class DecoratedPageCanvas(canvas.Canvas):
                 self._draw_footer(page_count)
             super().showPage()
         super().save()
-
     def _draw_cover_band(self) -> None:
         self.saveState()
         self.setFillColor(ACCENT)
@@ -53,12 +47,10 @@ class DecoratedPageCanvas(canvas.Canvas):
         self.setFillColor(BRAND_DARK)
         self.rect(COVER_BAND_WIDTH, 0, COVER_BAND_WIDTH / 4, PAGE_HEIGHT, stroke=0, fill=1)
         self.restoreState()
-
     def _draw_rule(self, y: float) -> None:
         self.setStrokeColor(RULE)
         self.setLineWidth(0.6)
         self.line(MARGIN, y, PAGE_WIDTH - MARGIN, y)
-
     def _draw_header(self) -> None:
         self.saveState()
         self._draw_rule(HEADER_RULE_Y)
@@ -72,7 +64,6 @@ class DecoratedPageCanvas(canvas.Canvas):
         self.setFillColor(MUTED_TEXT)
         self.drawRightString(PAGE_WIDTH - MARGIN, HEADER_TEXT_Y, REPORT_TITLE)
         self.restoreState()
-
     def _draw_footer(self, page_count: int) -> None:
         self.saveState()
         self._draw_rule(FOOTER_RULE_Y)

@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 from reportlab.lib.units import mm
 from reportlab.platypus import KeepTogether, PageBreak, Spacer
-
 from ...analysis import Analysis
 from ...charts import LINE
 from ...detection import TESTS, Episode
@@ -30,14 +28,12 @@ INTRODUCTION = (
 )
 NO_EPISODES = "No anomalies were detected with the selected tests and parameters."
 
-
 def episode_sections(context: ReportContext) -> list:
     story = [PageBreak(), section_title(6, "Anomaly details")]
     if not context.analysis.episodes:
         return [*story, paragraph(NO_EPISODES)]
     story += [paragraph(INTRODUCTION), Spacer(1, 4 * mm)]
     return story + [_episode_block(context, episode) for episode in context.analysis.episodes]
-
 
 def _episode_block(context: ReportContext, episode: Episode) -> KeepTogether:
     title = f"{episode.id} &nbsp;·&nbsp; {episode.kind.upper()} &nbsp;·&nbsp; {episode.series}"
@@ -57,7 +53,6 @@ def _episode_block(context: ReportContext, episode: Episode) -> KeepTogether:
         ]
     )
 
-
 def _facts(analysis: Analysis, episode: Episode) -> list[list[str]]:
     test_results = analysis.results[episode.series].loc[episode.dates]
     facts = [
@@ -69,7 +64,6 @@ def _facts(analysis: Analysis, episode: Episode) -> list[list[str]]:
         ["Max |z-score|", format_number(episode.max_abs_z, 2)],
     ]
     return facts + [[test, "Flagged" if test_results[test].any() else "-"] for test in TESTS]
-
 
 def _chart(context: ReportContext, episode: Episode) -> bytes:
     window, flags = context.analysis.episode_context(episode)

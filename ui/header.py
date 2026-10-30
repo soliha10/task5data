@@ -1,12 +1,8 @@
 from __future__ import annotations
-
 from datetime import datetime
-
 import streamlit as st
-
 from mining import stats
 from mining.analysis import Analysis
-
 from .components import INFO_METRIC
 
 HERO_TEMPLATE = """
@@ -21,7 +17,6 @@ HERO_TEMPLATE = """
 </div>
 """
 
-
 def render_header(analysis: Analysis, fetched_at: datetime) -> None:
     index = analysis.output.index
     subtitle = (
@@ -32,12 +27,10 @@ def render_header(analysis: Analysis, fetched_at: datetime) -> None:
         HERO_TEMPLATE.format(subtitle=subtitle, refreshed=fetched_at), unsafe_allow_html=True
     )
 
-
 def render_kpis(analysis: Analysis) -> None:
     top = analysis.top_mine
     top_mean = analysis.summary.at[top, stats.MEAN]
     anomalies = f"{analysis.spike_count} spikes · {analysis.drop_count} drops"
-
     total, mean, std, best, episodes = st.columns(5)
     total.metric("Total output", f"{analysis.total_stat(stats.TOTAL_OUTPUT):,.0f} t", border=True)
     mean.metric(

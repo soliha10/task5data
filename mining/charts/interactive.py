@@ -1,9 +1,7 @@
 from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-
 from ..detection import DROP, SPIKE
 from .theme import (
     DATE_TICK_FORMAT,
@@ -37,7 +35,6 @@ TRANSPARENT = "rgba(0,0,0,0)"
 HOVER_POINT = "%{x|%b %d, %Y}<br>%{y:.1f} t"
 STACK_OUTLINE_WIDTH = 3
 
-
 def build_figure(
     output: pd.DataFrame,
     series: list[str],
@@ -63,10 +60,8 @@ def build_figure(
     _apply_layout(figure, title, height, barmode="stack" if kind == STACKED else "group")
     return figure
 
-
 def _hover_template(name: str) -> str:
     return f"<b>{name}</b><br>{HOVER_POINT}<extra></extra>"
-
 
 def _add_trend(
     figure: go.Figure, x, values: pd.Series, degree: int, name: str, color: str, width: float
@@ -79,7 +74,6 @@ def _add_trend(
         line=dict(color=color, width=width, dash="dash"),
         hoverinfo="skip",
     )
-
 
 def _add_stack(
     figure: go.Figure,
@@ -112,7 +106,6 @@ def _add_stack(
             2.5,
         )
 
-
 def _add_series(
     figure: go.Figure,
     output: pd.DataFrame,
@@ -144,7 +137,6 @@ def _add_series(
     if trend_degree:
         _add_trend(figure, output.index, output[name], trend_degree, f"{name} trend", color, 1.6)
 
-
 def _add_flag_markers(figure: go.Figure, name: str, flags: pd.DataFrame) -> None:
     directions = flags["direction"]
     figure.add_scatter(
@@ -165,7 +157,6 @@ def _add_flag_markers(figure: go.Figure, name: str, flags: pd.DataFrame) -> None
         ),
     )
 
-
 def _add_direction_legend(figure: go.Figure) -> None:
     for direction, color in DIRECTION_COLORS.items():
         figure.add_scatter(
@@ -181,7 +172,6 @@ def _add_direction_legend(figure: go.Figure) -> None:
             ),
         )
 
-
 def _add_highlight(figure: go.Figure, highlight: Span) -> None:
     half_day = pd.Timedelta(hours=12)
     figure.add_vrect(
@@ -192,7 +182,6 @@ def _add_highlight(figure: go.Figure, highlight: Span) -> None:
         line_width=0,
         layer="below",
     )
-
 
 def _apply_layout(figure: go.Figure, title: str | None, height: int, barmode: str) -> None:
     figure.update_layout(

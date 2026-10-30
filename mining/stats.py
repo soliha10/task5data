@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import pandas as pd
 
 MEAN, STD, MEDIAN, Q1, Q3, IQR, MIN, MAX, TOTAL_OUTPUT = (
@@ -14,7 +13,6 @@ MEAN, STD, MEDIAN, Q1, Q3, IQR, MIN, MAX, TOTAL_OUTPUT = (
     "Total output",
 )
 STAT_COLUMNS = [MEAN, STD, MEDIAN, Q1, Q3, IQR, MIN, MAX, TOTAL_OUTPUT]
-
 
 def describe_series(output: pd.DataFrame) -> pd.DataFrame:
     first_quartile = output.quantile(0.25)

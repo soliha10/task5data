@@ -1,11 +1,8 @@
 from __future__ import annotations
-
 import streamlit as st
-
 from mining import charts
 from mining.analysis import Analysis
 from mining.detection import Episode
-
 from .components import NO_ANOMALIES_MESSAGE, show_chart, show_episodes_table
 
 EPISODES_CAPTION = (
@@ -13,7 +10,6 @@ EPISODES_CAPTION = (
     "Expected = median of nearby normal days, mapped onto the peak day."
 )
 EPISODE_CHART_HEIGHT = 280
-
 
 def render_anomalies_tab(analysis: Analysis) -> None:
     if not analysis.episodes:
@@ -24,14 +20,12 @@ def render_anomalies_tab(analysis: Analysis) -> None:
     for episode in analysis.episodes:
         _render_episode(analysis, episode)
 
-
 def _episode_title(episode: Episode) -> str:
     icon = "🔺" if episode.is_spike else "🔻"
     return (
         f"{icon} {episode.id} · {episode.kind} · {episode.series} · "
         f"{episode.period_label()} · {episode.deviation_pct:+.1f}%"
     )
-
 
 def _episode_facts(episode: Episode) -> str:
     return (
@@ -42,7 +36,6 @@ def _episode_facts(episode: Episode) -> str:
         f"**Max |z|:** {episode.max_abs_z:.2f}  \n"
         f"**Detected by:** {', '.join(episode.tests)}"
     )
-
 
 def _render_episode(analysis: Analysis, episode: Episode) -> None:
     with st.expander(_episode_title(episode)):

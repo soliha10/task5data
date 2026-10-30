@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 import pandas as pd
 import streamlit as st
-
 from mining import charts
 from mining.analysis import Analysis
 from mining.detection import Episode, episodes_table
@@ -10,10 +8,8 @@ from mining.detection import Episode, episodes_table
 NO_ANOMALIES_MESSAGE = "No anomalies detected with the selected tests and parameters."
 INFO_METRIC = dict(delta_color="off", delta_arrow="off", border=True)
 
-
 def styled(frame: pd.DataFrame, digits: int = 1):
     return frame.style.format(precision=digits, thousands=",")
-
 
 def show_chart(
     analysis: Analysis,
@@ -40,7 +36,6 @@ def show_chart(
         height=height,
     )
     st.plotly_chart(figure, width="stretch", key=key)
-
 
 def show_episodes_table(episodes: list[Episode]) -> None:
     st.dataframe(

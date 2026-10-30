@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 from reportlab.lib.units import mm
 from reportlab.platypus import CondPageBreak, KeepTogether, PageBreak, Spacer, Table
-
 from ... import stats
 from ...data import series_label
 from ...detection import Episode
@@ -25,13 +23,11 @@ CHART_SIZE = (10, 3.4)
 CHART_ASPECT = 0.37
 MIN_SPACE_FOR_SECTION = 120 * mm
 
-
 def mine_sections(context: ReportContext) -> list:
     story = [PageBreak(), section_title(5, "Mine details")]
     for name in context.analysis.output.columns:
         story += _mine_section(context, name)
     return story
-
 
 def _mine_section(context: ReportContext, name: str) -> list:
     chart = context.chart_png(
@@ -50,7 +46,6 @@ def _mine_section(context: ReportContext, name: str) -> list:
         Spacer(1, 6 * mm),
     ]
 
-
 def _statistics_table(context: ReportContext, name: str) -> Table:
     summary = context.analysis.summary
     header = [*STAT_COLUMNS, "Total"]
@@ -58,14 +53,12 @@ def _statistics_table(context: ReportContext, name: str) -> Table:
     values.append(format_number(summary.at[name, stats.TOTAL_OUTPUT], 0))
     return data_table([header, values], equal_widths(len(header)), numeric_columns=(0, -1))
 
-
 def _episodes_block(episodes: list[Episode]) -> list:
     if not episodes:
         return [paragraph("No anomalies detected with the selected tests.", "note")]
     rows = [EPISODE_HEADER] + [_episode_row(episode) for episode in episodes]
     widths = [*EPISODE_FIXED_WIDTHS, CONTENT_WIDTH - sum(EPISODE_FIXED_WIDTHS)]
     return [Spacer(1, 2 * mm), data_table(rows, widths, numeric_columns=EPISODE_NUMERIC_COLUMNS)]
-
 
 def _episode_row(episode: Episode) -> list:
     return [

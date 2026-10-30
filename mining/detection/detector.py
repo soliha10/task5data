@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 import numpy as np
 import pandas as pd
-
 from .outlier_tests import (
     grubbs_outliers,
     iqr_outliers,
@@ -14,7 +12,6 @@ from .params import DROP, GRUBBS, IQR, MOVING_AVG, SPIKE, TESTS, ZSCORE, Detecti
 
 ANY_SELECTED = "Any selected"
 FLAGGED_COLUMNS = ["value", "z", "ma_dev_pct", "direction", "tests"]
-
 
 def detect_outliers(series: pd.Series, params: DetectionParams) -> pd.DataFrame:
     tested = remove_trend_and_weekday(series) if params.adjust else series.astype(float)
@@ -35,17 +32,14 @@ def detect_outliers(series: pd.Series, params: DetectionParams) -> pd.DataFrame:
         }
     )
 
-
 def detect_all(output: pd.DataFrame, params: DetectionParams) -> dict[str, pd.DataFrame]:
     return {name: detect_outliers(output[name], params) for name in output.columns}
-
 
 def any_test_flagged(result: pd.DataFrame, tests) -> pd.Series:
     tests = list(tests)
     if not tests:
         return pd.Series(False, index=result.index)
     return result[tests].any(axis=1)
-
 
 def flagged_days(result: pd.DataFrame, tests) -> pd.DataFrame:
     tests = list(tests)
@@ -55,13 +49,11 @@ def flagged_days(result: pd.DataFrame, tests) -> pd.DataFrame:
     ]
     return flagged[FLAGGED_COLUMNS]
 
-
 def count_flags_by_test(results: dict[str, pd.DataFrame], tests) -> pd.DataFrame:
     rows = {name: _flag_counts(result, tests) for name, result in results.items()}
     table = pd.DataFrame.from_dict(rows, orient="index")
     table.index.name = "Series"
     return table
-
 
 def _flag_counts(result: pd.DataFrame, tests) -> dict[str, int]:
     counts = {test: int(result[test].sum()) for test in TESTS}

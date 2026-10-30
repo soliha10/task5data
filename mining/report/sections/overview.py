@@ -1,12 +1,9 @@
 from __future__ import annotations
-
 from reportlab.lib.units import mm
 from reportlab.platypus import PageBreak, Spacer
-
 from ...data import TOTAL
 from ..components import chart_image, section_title
 from ..context import ReportContext
-
 
 def overview_section(context: ReportContext) -> list:
     analysis = context.analysis

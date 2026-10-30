@@ -1,11 +1,9 @@
 from __future__ import annotations
-
 from reportlab.lib.colors import HexColor
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
-
 from .. import brand
 from ..detection import DROP, SPIKE
 
@@ -23,25 +21,20 @@ SUBHEADING = HexColor(brand.PRIMARY_800)
 EPISODE_COLORS = {SPIKE: HexColor(brand.SPIKE), DROP: HexColor(brand.DROP)}
 EPISODE_TEXT_COLORS = {SPIKE: PAPER, DROP: INK}
 MUTED_TEXT_ON_TINT_HEX = brand.TEXT_MUTED_ON_TINT
-
 PAGE_SIZE = A4
 PAGE_WIDTH, PAGE_HEIGHT = A4
 MARGIN = 18 * mm
 CONTENT_WIDTH = PAGE_WIDTH - 2 * MARGIN
 SERIES_COLUMN_WIDTH = 30 * mm
 COVER_BAND_WIDTH = 7 * mm
-
 COMPANY = "Weyland-Yutani Corporation"
 REPORT_TITLE = "Mining Output & Anomaly Report"
 FOOTER_NOTE = "Confidential - internal use only"
 
-
 def _build_styles() -> dict[str, ParagraphStyle]:
     sample = getSampleStyleSheet()
-
     def style(name: str, parent: str = "BodyText", **options) -> ParagraphStyle:
         return ParagraphStyle(name, parent=sample[parent], **options)
-
     bold = "Helvetica-Bold"
     return {
         "brand": style("brand", fontName=bold, fontSize=10, leading=14, textColor=ACCENT),
@@ -90,6 +83,5 @@ def _build_styles() -> dict[str, ParagraphStyle]:
             textColor=MUTED_TEXT_ON_TINT,
         ),
     }
-
 
 STYLES = _build_styles()

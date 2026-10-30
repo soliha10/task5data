@@ -11,7 +11,6 @@ PRIMARY_700 = "#6d28d9"
 PRIMARY_800 = "#5b21b6"
 PRIMARY_900 = "#4c1d95"
 PRIMARY_950 = "#2e1065"
-
 WHITE = "#ffffff"
 SLATE_50 = "#f8fafc"
 SLATE_200 = "#e2e8f0"
@@ -20,12 +19,10 @@ SLATE_500 = "#64748b"
 SLATE_600 = "#475569"
 SLATE_700 = "#334155"
 SLATE_900 = "#0f172a"
-
 SPIKE = "#e11d48"
 DROP = "#f59e0b"
 DROP_OUTLINE = "#b45309"
 SUCCESS = "#16a34a"
-
 ACTION = PRIMARY_600
 ACTION_HOVER = PRIMARY_700
 BRAND_DARK = PRIMARY_900
@@ -39,7 +36,6 @@ TEXT_MUTED_ON_TINT = SLATE_600
 BORDER = SLATE_200
 AXIS = SLATE_400
 SURFACE = SLATE_50
-
 CATEGORICAL = [
     "#2563eb",
     "#0d9488",
@@ -52,11 +48,9 @@ CATEGORICAL = [
     "#0891b2",
     "#78716c",
 ]
-
 FONT_NAME = "Inter"
 FONT_URL = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 FONT_STACK = "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
-
 RADIUS_PX = 12
 RADIUS_SMALL_PX = 8
 ACCENT_BAR_PX = 3

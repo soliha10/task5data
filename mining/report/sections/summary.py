@@ -1,8 +1,6 @@
 from __future__ import annotations
-
 from reportlab.lib.units import mm
 from reportlab.platypus import Spacer
-
 from ... import stats
 from ...analysis import Analysis
 from ...data import TOTAL
@@ -22,13 +20,11 @@ STAT_COLUMNS = [
 ]
 DAYS_PER_WEEK = 7
 
-
 def executive_summary(context: ReportContext) -> list:
     findings = _findings(context.analysis)
     return [section_title(1, "Executive summary")] + [
         paragraph(f"&bull;&nbsp;&nbsp;{finding}") for finding in findings
     ]
-
 
 def statistics_section(context: ReportContext) -> list:
     summary = context.analysis.summary
@@ -50,7 +46,6 @@ def statistics_section(context: ReportContext) -> list:
         ),
     ]
 
-
 def flag_counts_section(context: ReportContext) -> list:
     counts = context.analysis.flag_counts
     rows = [["Series", *counts.columns]] + [
@@ -64,7 +59,6 @@ def flag_counts_section(context: ReportContext) -> list:
         paragraph(_parameters_note(context.analysis.params), "note"),
     ]
 
-
 def _findings(analysis: Analysis) -> list[str]:
     findings = [
         _output_finding(analysis),
@@ -77,7 +71,6 @@ def _findings(analysis: Analysis) -> list[str]:
         findings.append(_largest_deviation_finding(analysis))
     return findings
 
-
 def _output_finding(analysis: Analysis) -> str:
     total = format_number(analysis.total_stat(stats.TOTAL_OUTPUT), 0)
     mean = format_number(analysis.total_stat(stats.MEAN))
@@ -87,7 +80,6 @@ def _output_finding(analysis: Analysis) -> str:
         f"Total output over the period was <b>{total} t</b>, an average of "
         f"<b>{mean} t/day</b> (median {median}, IQR {iqr})."
     )
-
 
 def _mine_ranking_finding(analysis: Analysis) -> str:
     summary, mines = analysis.summary, analysis.mines
@@ -99,14 +91,12 @@ def _mine_ranking_finding(analysis: Analysis) -> str:
         f"<b>{most_volatile}</b> is the most volatile relative to its mean."
     )
 
-
 def _weekly_change_finding(analysis: Analysis) -> str:
     total = analysis.output[TOTAL]
     first_week = total.iloc[:DAYS_PER_WEEK].mean()
     last_week = total.iloc[-DAYS_PER_WEEK:].mean()
     change = (last_week - first_week) / first_week * 100 if first_week else 0.0
     return f"Average daily total in the last week is <b>{change:+.1f}%</b> versus the first week."
-
 
 def _largest_deviation_finding(analysis: Analysis) -> str:
     largest = max(analysis.episodes, key=lambda episode: abs(episode.deviation_pct))
@@ -115,7 +105,6 @@ def _largest_deviation_finding(analysis: Analysis) -> str:
         f"<b>{largest.series}</b> on {largest.peak_date:%d %b %Y} "
         f"({largest.deviation_pct:+.1f}% vs expected)."
     )
-
 
 def _parameters_note(params: DetectionParams) -> str:
     adjustment = "on" if params.adjust else "off"

@@ -1,15 +1,12 @@
 from __future__ import annotations
-
 from reportlab.lib.units import mm
 from reportlab.platypus import PageBreak, Spacer, Table
-
 from ... import stats
 from ..components import format_number, key_value_table, kpi_strip, paragraph
 from ..context import ReportContext
 from ..theme import COMPANY, CONTENT_WIDTH, MUTED_TEXT_ON_TINT_HEX, REPORT_TITLE
 
 DETAILS_KEY_WIDTH = 48 * mm
-
 
 def cover_page(context: ReportContext) -> list:
     return [
@@ -26,12 +23,10 @@ def cover_page(context: ReportContext) -> list:
         PageBreak(),
     ]
 
-
 def _subtitle(context: ReportContext) -> str:
     index = context.analysis.output.index
     period = f"{index[0]:%d %b %Y} - {index[-1]:%d %b %Y}"
     return f"Daily resource extraction · {len(context.analysis.mines)} mines · {period}"
-
 
 def _kpis(context: ReportContext) -> Table:
     analysis = context.analysis
@@ -47,7 +42,6 @@ def _kpis(context: ReportContext) -> Table:
             ("Anomalies (spikes / drops)", anomalies),
         ]
     )
-
 
 def _details(context: ReportContext) -> Table:
     settings, analysis = context.settings, context.analysis

@@ -4,7 +4,7 @@ Task #5 (Data Engineering group): a Google Sheets generator of daily mine output
 dashboard that analyses it.
 
 - **Generator (Google Sheets):** https://docs.google.com/spreadsheets/d/11bMcCAMNjKuTDoMHstHA9hZesTna60EVzw3Xp0Xsx5Q/edit
-- **Dashboard:** _add the deployed Streamlit URL here_
+- **Dashboard:** https://task5data.streamlit.app/
 
 ## Part I: Generator
 
@@ -94,7 +94,6 @@ python3 -m venv .venv
 
 ```bash
 .venv/bin/ruff check .
-.venv/bin/ruff format --check .
 .venv/bin/pytest
 ```
 

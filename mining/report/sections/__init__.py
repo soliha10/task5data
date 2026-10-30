@@ -15,5 +15,4 @@ SECTION_BUILDERS = (
     episode_sections,
     methodology_section,
 )
-
 __all__ = ["SECTION_BUILDERS"]

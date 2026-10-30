@@ -1,12 +1,8 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
-
 import streamlit as st
-
 from mining import charts
 from mining.detection import TESTS, DetectionParams
-
 from .data_source import default_source, refresh_dataset
 from .styles import sidebar_heading
 
@@ -25,7 +21,6 @@ ADJUST_HELP = (
     "weekend dips and growth are not reported as anomalies."
 )
 
-
 @dataclass(frozen=True)
 class Controls:
     source: str
@@ -33,11 +28,9 @@ class Controls:
     trend_degree: int | None
     tests: tuple[str, ...]
     params: DetectionParams
-
     @property
     def single_series_kind(self) -> str:
         return charts.single_series_kind(self.chart_kind)
-
 
 def read_sidebar_controls() -> Controls:
     with st.sidebar:
@@ -46,14 +39,12 @@ def read_sidebar_controls() -> Controls:
         params = _read_detection_params()
     return Controls(source, chart_kind, trend_degree, tests, params)
 
-
 def _read_source() -> str:
     sidebar_heading("Data source")
     source = st.text_input("Generator spreadsheet (URL or ID)", value=default_source())
     if st.button("Refresh data", icon=":material/refresh:", type="primary", width="stretch"):
         refresh_dataset()
     return source
-
 
 def _read_chart_options() -> tuple[str, int | None, tuple[str, ...]]:
     sidebar_heading("Charts")
@@ -65,7 +56,6 @@ def _read_chart_options() -> tuple[str, int | None, tuple[str, ...]]:
     )
     tests = st.multiselect("Highlight outliers found by", TESTS, default=list(TESTS))
     return kind, TREND_OPTIONS[trend], tuple(tests)
-
 
 def _read_detection_params() -> DetectionParams:
     sidebar_heading("Anomaly tests")

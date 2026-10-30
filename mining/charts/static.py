@@ -1,14 +1,11 @@
 from __future__ import annotations
-
 import io
-
 import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-
 from ..detection import DROP, SPIKE
 from .theme import (
     AXIS_COLOR,
@@ -42,7 +39,6 @@ BAR_WIDTH = 0.8
 STACK_OUTLINE_WIDTH = 2.2
 DEFAULT_SIZE = (10, 4.2)
 
-
 def render_png(
     output: pd.DataFrame,
     series: list[str],
@@ -58,7 +54,6 @@ def render_png(
     figure = Figure(figsize=size, dpi=PNG_DPI)
     axes = figure.subplots()
     x = mdates.date2num(output.index.to_pydatetime())
-
     if kind == STACKED:
         _draw_stack(axes, x, output, series, trend_degree, flagged, colors)
     else:
@@ -67,7 +62,6 @@ def render_png(
     _style_axes(axes, x, title)
     _add_legend(axes, show_directions=has_flags(flagged))
     return _to_png(figure)
-
 
 def _draw_stack(
     axes: Axes,
@@ -104,7 +98,6 @@ def _draw_stack(
             label=trend_label(trend_degree),
         )
 
-
 def _draw_series(
     axes: Axes,
     x,
@@ -135,7 +128,6 @@ def _draw_series(
                 x, polynomial_trend(output[name], trend_degree), color=colors[name], lw=1.3, ls="--"
             )
 
-
 def _draw_flag_markers(axes: Axes, flags: pd.DataFrame) -> None:
     for direction, marker in MARKERS.items():
         points = flags[flags["direction"] == direction]
@@ -151,14 +143,12 @@ def _draw_flag_markers(axes: Axes, flags: pd.DataFrame) -> None:
                 zorder=5,
             )
 
-
 def _draw_annotations(axes: Axes, highlight: Span | None, expected: float | None) -> None:
     if highlight:
         start, end = mdates.date2num(highlight[0]), mdates.date2num(highlight[1])
         axes.axvspan(start - 0.5, end + 0.5, color=HIGHLIGHT_COLOR, alpha=0.9, zorder=0)
     if expected is not None:
         axes.axhline(expected, color=EXPECTED_COLOR, lw=1, ls=":", label="Expected at peak")
-
 
 def _style_axes(axes: Axes, x, title: str | None) -> None:
     axes.spines[["top", "right"]].set_visible(False)
@@ -172,7 +162,6 @@ def _style_axes(axes: Axes, x, title: str | None) -> None:
     axes.set_ylim(bottom=0)
     if title:
         axes.set_title(title, loc="left", fontsize=11, color=TITLE_COLOR, fontweight="bold", pad=10)
-
 
 def _direction_handles() -> list[Line2D]:
     return [
@@ -189,7 +178,6 @@ def _direction_handles() -> list[Line2D]:
         for direction, color in DIRECTION_COLORS.items()
     ]
 
-
 def _add_legend(axes: Axes, show_directions: bool) -> None:
     handles, _ = axes.get_legend_handles_labels()
     if show_directions:
@@ -202,7 +190,6 @@ def _add_legend(axes: Axes, show_directions: bool) -> None:
         frameon=False,
         fontsize=8,
     )
-
 
 def _to_png(figure: Figure) -> bytes:
     figure.tight_layout()

@@ -1,12 +1,9 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 
 IQR, ZSCORE, MOVING_AVG, GRUBBS = "IQR", "Z-score", "Moving avg", "Grubbs"
 TESTS = (IQR, ZSCORE, MOVING_AVG, GRUBBS)
-
 SPIKE, DROP = "Spike", "Drop"
-
 
 @dataclass(frozen=True)
 class DetectionParams:

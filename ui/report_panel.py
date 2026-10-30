@@ -1,27 +1,21 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from datetime import datetime
-
 import streamlit as st
-
 from mining.analysis import Analysis
 from mining.data import extract_sheet_id, sheet_csv_url
 from mining.report import ReportSettings, build_report
-
 from .controls import Controls
 from .styles import sidebar_heading
 
 STATE_KEY = "pdf_report"
 FILE_NAME_TEMPLATE = "weyland-yutani-mining-report-{:%Y%m%d-%H%M}.pdf"
 
-
 @dataclass(frozen=True)
 class GeneratedReport:
     fingerprint: tuple
     content: bytes
     file_name: str
-
 
 def render_report_panel(analysis: Analysis, controls: Controls, fetched_at: datetime) -> None:
     fingerprint = (fetched_at, controls)
@@ -31,7 +25,6 @@ def render_report_panel(analysis: Analysis, controls: Controls, fetched_at: date
             with st.spinner("Building PDF report…"):
                 st.session_state[STATE_KEY] = _generate(analysis, controls, fingerprint)
         _offer_download(st.session_state.get(STATE_KEY), fingerprint, len(analysis.episodes))
-
 
 def _generate(analysis: Analysis, controls: Controls, fingerprint: tuple) -> GeneratedReport:
     now = datetime.now()
@@ -44,7 +37,6 @@ def _generate(analysis: Analysis, controls: Controls, fingerprint: tuple) -> Gen
     return GeneratedReport(
         fingerprint, build_report(analysis, settings), FILE_NAME_TEMPLATE.format(now)
     )
-
 
 def _offer_download(report: GeneratedReport | None, fingerprint: tuple, episodes: int) -> None:
     if report is None or report.fingerprint != fingerprint:
